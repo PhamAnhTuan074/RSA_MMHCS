@@ -1,0 +1,11 @@
+services:
+  rsa-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rsa-learning-lab:latest
+    container_name: rsa-learning-lab
+    init: true
+    ports:
+      - "8501:8501"
+    restart: unless-stopped

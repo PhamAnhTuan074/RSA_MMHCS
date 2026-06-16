@@ -1,0 +1,17 @@
+.git
+.gitignore
+.venv
+.pytest_cache
+__pycache__
+*.py[cod]
+*.log
+*.png
+.idea
+.vscode
+docs
+tests
+pytest.ini
+run_app.ps1
+compose*.yaml
+Dockerfile*
+README.md

@@ -185,29 +185,68 @@ def _fast_power_lesson() -> None:
 
 
 def _security_lesson() -> None:
-    st.markdown('<div class="section-label">Điều cần ghi nhớ</div>', unsafe_allow_html=True)
-    st.warning(
-        "**Ví dụ nhỏ không an toàn.** `p=3`, `q=11` giúp tính tay nhưng có thể "
-        "bị phân tích ngay lập tức. Nó chỉ phục vụ học tập."
+    st.subheader("RSA trong chữ ký số")
+    st.info(
+        "Trong chữ ký số, RSA giúp xác thực người ký và kiểm tra dữ liệu có bị thay đổi "
+        "sau khi ký hay không. Muốn an toàn, RSA cần khóa đủ lớn, chuẩn ký phù hợp và "
+        "thư viện mật mã đã được kiểm chứng."
     )
-    security_points = [
-        ("Khóa thực tế", "RSA thường dùng khóa 2048 bit hoặc lớn hơn."),
-        ("Không dùng RSA thô", "Hệ thống thật cần padding an toàn như OAEP."),
-        ("Không tự viết mật mã", "Hãy dùng thư viện chuẩn đã được kiểm chứng."),
-        ("Giữ bí mật p, q, d", "Lộ các giá trị này đồng nghĩa khóa bí mật bị phá."),
+
+    def render_point_cards(items: list[tuple[str, str]]) -> None:
+        card_height = 128
+        for row_start in range(0, len(items), 2):
+            columns = st.columns(2)
+            for column, (title, text) in zip(columns, items[row_start : row_start + 2]):
+                with column:
+                    with st.container(border=True, height=card_height):
+                        st.markdown(f"**{title}**")
+                        st.write(text)
+
+    st.markdown("### Ưu điểm")
+    advantages = [
+        (
+            "Bảo mật cao",
+            "Khóa đủ lớn và chuẩn ký an toàn giúp RSA rất khó bị phá bằng máy tính thông thường.",
+        ),
+        (
+            "Linh hoạt",
+            "RSA dùng được trong nhiều hệ thống bảo mật, nhất là khi cần xác thực danh tính.",
+        ),
+        (
+            "Tương thích rộng",
+            "Nhiều nền tảng, thư viện và hạ tầng chứng chỉ số hiện đã hỗ trợ RSA.",
+        ),
+        (
+            "Đã được kiểm chứng",
+            "RSA đã được dùng lâu năm trong thực tế nên có mức độ tin cậy cao.",
+        ),
     ]
-    cards = "".join(
-        f"""
-            <div class="note-card">
-                <strong>{title}</strong>
-                <p>{text}</p>
-            </div>
-        """
-        for title, text in security_points
-    )
-    st.markdown(
-        f'<div class="definition-grid">{cards}</div>',
-        unsafe_allow_html=True,
+    render_point_cards(advantages)
+
+    st.markdown("### Hạn chế")
+    limitations = [
+        (
+            "Xử lý chậm hơn",
+            "RSA có thể chậm khi cần ký hoặc kiểm tra chữ ký với số lượng lớn.",
+        ),
+        (
+            "Cần khóa lớn",
+            "Khóa 2048 bit hoặc 4096 bit an toàn hơn nhưng tốn thêm tài nguyên.",
+        ),
+        (
+            "Quản lý khóa phức tạp",
+            "Hệ thống nhiều người dùng cần quản lý tạo, lưu trữ và thu hồi khóa chặt chẽ.",
+        ),
+        (
+            "Có rủi ro triển khai",
+            "Máy tính lượng tử và side-channel có thể gây rủi ro nếu triển khai sai.",
+        ),
+    ]
+    render_point_cards(limitations)
+
+    st.warning(
+        "**Ghi nhớ:** các ví dụ số nhỏ trong website chỉ dùng để học. Hệ thống thật nên dùng "
+        "khóa đủ dài, thư viện chuẩn và padding chữ ký như RSA-PSS; không nên tự triển khai mật mã."
     )
 
 

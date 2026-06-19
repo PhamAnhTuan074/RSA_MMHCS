@@ -167,13 +167,17 @@ def _fast_power_lesson() -> None:
     st.markdown(
         """
         <div class="formula-grid">
-            <div class="formula-card"><div class="formula-label">Khởi tạo</div><div class="formula-value">result = 1</div></div>
-            <div class="formula-card"><div class="formula-label">Nếu số mũ lẻ</div><div class="formula-value">result = result × base mod n</div></div>
-            <div class="formula-card"><div class="formula-label">Bình phương</div><div class="formula-value">base = base² mod n</div></div>
-            <div class="formula-card"><div class="formula-label">Giảm số mũ</div><div class="formula-value">exponent = exponent // 2</div></div>
+            <div class="formula-card"><div class="formula-label">Bài toán</div><div class="formula-value">a^b mod n</div></div>
+            <div class="formula-card"><div class="formula-label">Khởi tạo</div><div class="formula-value">k = 1<br>a = a mod n</div></div>
+            <div class="formula-card"><div class="formula-label">Nếu b lẻ</div><div class="formula-value">k = k × a mod n</div></div>
+            <div class="formula-card"><div class="formula-label">Vòng sau</div><div class="formula-value">a = a² mod n<br>b = b // 2</div></div>
         </div>
         """,
         unsafe_allow_html=True,
+    )
+    st.write(
+        "Trong bảng dưới đây, `a` là số đang lũy thừa, `b` là số mũ còn lại, "
+        "`n` là modulo và `k` là kết quả tạm đang được tích lũy."
     )
     st.caption("Ví dụ: tính `4³ mod 33`; số mũ `3 = 11₂`.")
     st.dataframe(

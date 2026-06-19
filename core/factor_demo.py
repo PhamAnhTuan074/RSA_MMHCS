@@ -105,16 +105,21 @@ def fast_mod_exp_detailed_steps(
         rows.append(
             {
                 "Bước": step,
-                "Số mũ hiện tại": current_exponent,
-                "Nhị phân": bin(current_exponent)[2:],
-                "Lẻ/chẵn": "Lẻ - nhân" if is_odd else "Chẵn - giữ",
-                "result trước": result_before,
-                "base trước": base_before,
-                "result sau xử lý": result_detail,
-                "base sau bình phương": (
+                "b hiện tại": current_exponent,
+                "b ở nhị phân": bin(current_exponent)[2:],
+                "Bit cuối": current_exponent % 2,
+                "Nhận xét": (
+                    "b lẻ - nhân thêm a vào k"
+                    if is_odd
+                    else "b chẵn - giữ k, chỉ bình phương a"
+                ),
+                "k trước": result_before,
+                "a hiện tại": base_before,
+                "k sau bước": result_detail,
+                "a cho bước sau": (
                     f"{base_before}² mod {modulus} = {current_base}"
                 ),
-                "Số mũ tiếp": str(next_exponent),
+                "b bước sau": str(next_exponent),
             }
         )
         current_exponent = next_exponent
@@ -123,14 +128,15 @@ def fast_mod_exp_detailed_steps(
     rows.append(
         {
             "Bước": step,
-            "Số mũ hiện tại": 0,
-            "Nhị phân": "0",
-            "Lẻ/chẵn": "Dừng",
-            "result trước": result,
-            "base trước": current_base,
-            "result sau xử lý": f"Kết quả cuối = {result}",
-            "base sau bình phương": "-",
-            "Số mũ tiếp": "-",
+            "b hiện tại": 0,
+            "b ở nhị phân": "0",
+            "Bit cuối": "-",
+            "Nhận xét": "Dừng vì b = 0",
+            "k trước": result,
+            "a hiện tại": current_base,
+            "k sau bước": f"Kết quả cuối = {result}",
+            "a cho bước sau": "-",
+            "b bước sau": "-",
         }
     )
     return rows

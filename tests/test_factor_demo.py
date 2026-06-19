@@ -17,8 +17,8 @@ def test_tc07_factor_n():
 
 def test_detailed_fast_power_example_from_source_document():
     rows = fast_mod_exp_detailed_steps(4, 3, 33)
-    assert rows[-1]["result sau xử lý"] == "Kết quả cuối = 31"
-    assert rows[0]["Số mũ tiếp"] == "1"
+    assert rows[-1]["k sau bước"] == "Kết quả cuối = 31"
+    assert rows[0]["b bước sau"] == "1"
 
 
 def test_medium_example_from_source_document():

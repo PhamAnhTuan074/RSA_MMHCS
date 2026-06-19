@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="RSA Learning Lab: mô phỏng tạo khóa, mã hóa, giải mã RSA ngay trên trình duyệt."
+    />
+    <title>RSA Learning Lab</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23176b5b'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial' font-size='32' font-weight='700' fill='white'%3ER%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Điều hướng">
+        <div class="brand-block">
+          <span class="brand-mark" aria-hidden="true">R</span>
+          <div>
+            <p class="eyebrow">MMHCS</p>
+            <h1>RSA Learning Lab</h1>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="Các phần học">
+          <button class="nav-tab is-active" data-view="lab" type="button">
+            <span>01</span>
+            Mô phỏng
+          </button>
+          <button class="nav-tab" data-view="cipher" type="button">
+            <span>02</span>
+            Mã hóa
+          </button>
+          <button class="nav-tab" data-view="theory" type="button">
+            <span>03</span>
+            Lý thuyết
+          </button>
+        </nav>
+
+        <section class="side-note">
+          <p class="eyebrow">Lưu ý an toàn</p>
+          <p>
+            Các số nhỏ trong trang này chỉ phục vụ học tập. Hệ thống thực tế cần khóa lớn,
+            thư viện mật mã chuẩn và padding an toàn như OAEP.
+          </p>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="hero-band">
+          <div>
+            <p class="eyebrow">RSA trực quan trên Vercel</p>
+            <h2>Tạo khóa, mã hóa và giải mã RSA từng bước.</h2>
+          </div>
+          <div class="hero-metrics" aria-label="Công thức RSA">
+            <span>n = p.q</span>
+            <span>phi = (p-1)(q-1)</span>
+            <span>c = m^e mod n</span>
+          </div>
+        </section>
+
+        <section id="lab-view" class="view is-active">
+          <div class="control-strip">
+            <button class="preset-btn" data-preset="easy" type="button">Ví dụ dễ</button>
+            <button class="preset-btn" data-preset="medium" type="button">Ví dụ vừa</button>
+            <button class="preset-btn" data-preset="text" type="button">Ví dụ văn bản</button>
+          </div>
+
+          <div class="grid two-col">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Bước 1-6</p>
+                  <h3>Tham số tạo khóa</h3>
+                </div>
+              </div>
+
+              <div class="input-grid">
+                <label>
+                  <span>p</span>
+                  <input id="p-input" inputmode="numeric" type="number" min="3" step="1" value="61" />
+                </label>
+                <label>
+                  <span>q</span>
+                  <input id="q-input" inputmode="numeric" type="number" min="3" step="1" value="53" />
+                </label>
+                <label>
+                  <span>e</span>
+                  <input id="e-input" inputmode="numeric" type="number" min="2" step="1" value="17" />
+                </label>
+                <button id="suggest-e" class="secondary-btn" type="button">Gợi ý e</button>
+              </div>
+
+              <div id="key-status" class="status-box" role="status"></div>
+
+              <div class="formula-grid">
+                <div>
+                  <span>n</span>
+                  <strong id="n-value">-</strong>
+                </div>
+                <div>
+                  <span>phi(n)</span>
+                  <strong id="phi-value">-</strong>
+                </div>
+                <div>
+                  <span>Public key</span>
+                  <strong id="public-key">-</strong>
+                </div>
+                <div>
+                  <span>Private key</span>
+                  <strong id="private-key">-</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Euclid mở rộng</p>
+                  <h3>Tìm d từ e</h3>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Bước</th>
+                      <th>q</th>
+                      <th>r</th>
+                      <th>s</th>
+                      <th>t</th>
+                      <th>Biểu diễn</th>
+                    </tr>
+                  </thead>
+                  <tbody id="euclid-table"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Bước 7-10</p>
+                <h3>Mô phỏng mã hóa và giải mã</h3>
+              </div>
+              <div class="segmented" role="tablist" aria-label="Chế độ thông điệp">
+                <button class="is-active" id="mode-number" type="button">Số</button>
+                <button id="mode-text" type="button">Văn bản</button>
+              </div>
+            </div>
+
+            <div id="number-sim" class="sim-area">
+              <label class="wide-label">
+                <span>Thông điệp số m</span>
+                <input id="message-number" inputmode="numeric" type="number" min="0" step="1" value="65" />
+              </label>
+              <div id="number-result" class="result-banner"></div>
+            </div>
+
+            <div id="text-sim" class="sim-area is-hidden">
+              <label class="wide-label">
+                <span>Văn bản UTF-8</span>
+                <textarea id="message-text" rows="3">HELLO RSA</textarea>
+              </label>
+              <div id="text-result" class="result-banner"></div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Vòng</th>
+                    <th>Số mũ</th>
+                    <th>Bit lẻ</th>
+                    <th>Result</th>
+                    <th>Base</th>
+                  </tr>
+                </thead>
+                <tbody id="power-table"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="cipher-view" class="view">
+          <div class="grid two-col">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Công cụ nhanh</p>
+                  <h3>Mã hóa văn bản</h3>
+                </div>
+              </div>
+              <label class="wide-label">
+                <span>Plain text</span>
+                <textarea id="quick-plain" rows="4">Xin chào RSA</textarea>
+              </label>
+              <button id="encrypt-btn" class="primary-btn" type="button">Mã hóa</button>
+              <pre id="quick-cipher" class="output-box"></pre>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Công cụ nhanh</p>
+                  <h3>Giải mã bản mã</h3>
+                </div>
+              </div>
+              <label class="wide-label">
+                <span>Danh sách số bản mã</span>
+                <textarea id="quick-cipher-input" rows="4"></textarea>
+              </label>
+              <button id="decrypt-btn" class="primary-btn" type="button">Giải mã</button>
+              <pre id="quick-plain-output" class="output-box"></pre>
+            </section>
+          </div>
+        </section>
+
+        <section id="theory-view" class="view">
+          <div class="learning-grid">
+            <article>
+              <span>01</span>
+              <h3>RSA là gì?</h3>
+              <p>RSA là hệ mã hóa bất đối xứng dùng cặp khóa công khai và khóa bí mật có liên hệ toán học.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Tạo khóa</h3>
+              <p>Chọn p, q nguyên tố, tính n, phi(n), chọn e nguyên tố cùng nhau với phi(n), rồi tìm d.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Mã hóa</h3>
+              <p>Thông điệp số m được biến thành c bằng công thức c = m^e mod n.</p>
+            </article>
+            <article>
+              <span>04</span>
+              <h3>Giải mã</h3>
+              <p>Bản mã c được khôi phục thành m bằng công thức m = c^d mod n.</p>
+            </article>
+            <article>
+              <span>05</span>
+              <h3>Lũy thừa nhanh</h3>
+              <p>Square-and-multiply giảm số phép tính bằng cách xử lý số mũ theo từng bit.</p>
+            </article>
+            <article>
+              <span>06</span>
+              <h3>An toàn</h3>
+              <p>RSA thực tế dựa vào n rất lớn và không dùng RSA thô để mã hóa dữ liệu trực tiếp.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/app.js" type="module"></script>
+  </body>
+</html>
